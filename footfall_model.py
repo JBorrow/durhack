@@ -43,6 +43,8 @@ day_labels = ['m','t','w','th','f','sa','su']
 
 weeks_in_year	 = 53
 days_in_week = 7
+days_in_month = 28
+weeks_in_month = days_in_month/days_in_week
 #---------------------------------------------+ Formatting Data +--------------------------------------------------------------------------------------
 
 ## Function to format data and return day weights
@@ -63,6 +65,8 @@ def day_multiplier(street_year):
 	daily_footfall =  street_year.flatten()
 
 
+	# normalising for the effect of different days
+
 	normalised_footfall = []
 
 	for week in range(weeks_in_year):
@@ -76,7 +80,7 @@ def day_multiplier(street_year):
 
 	average_week = np.mean(normalised_footfall,axis = 0)
 
-	relative_day_weights = np.mean(normalised_footfall[:-1],axis = 0) # ignoring weird last data point ---> check!
+	relative_day_weights = np.mean(normalised_footfall[:-1], axis = 0) # ignoring weird last data point ---> check!
 
 	day_multipliers = 1/(relative_day_weights/min(relative_day_weights))
 
@@ -87,26 +91,43 @@ def day_multiplier(street_year):
 
 	weighted_days = (np.array(weighted_days)).flatten()
 
+	# normalising for the effect of different months
+	months_in_year = int(len(daily_footfall)/days_in_month)
+
+	extra_days =  int((len(daily_footfall)/days_in_month - months_in_year)*days_in_month) # dodgy fix for int number of months
+
+	normalised_footfall = np.array(normalised_footfall)
+	normalised_footfall = normalised_footfall.flatten()
+	normalised_footfall = normalised_footfall[:-extra_days]
+
+	print len(normalised_footfall)/13, months_in_year
+
+	normalised_footfall = np.reshape(normalised_footfall,(-1,1))
+
+	normalised_footfall = np.reshape(normalised_footfall,(months_in_year,days_in_month))
+
+
+	average_year = np.mean(normalised_footfall,axis = 1)
+
+	relative_month_weights = np.mean(normalised_footfall,axis = 1)
+
+	month_multpliers = 1/(relative_month_weights/min(relative_month_weights))
+
+	weighted_days_months = []
+
+
+
+
+
+
+'''
 	fig = plt.figure()
 
 	plt.plot(weighted_days)
 	plt.plot(daily_footfall)
 
 	plt.show()
-
+'''
 
 day_multiplier(nr16)
 
-
-def month_multplier(street_year):
-	"""
-	function to remove the variation in footfall due to being in a particular month.
-	Inputs:
-	------
-	street_year : accepted inputs are - ss15, eb15, nr15 ss16 eb16 nr16 cp16 mp16 [var]
-
-	Outputs: 
-	-------
-	year without moth effect : array of footfall for the given year, without the effect of months [array]
-
-	"""
