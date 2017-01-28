@@ -1,0 +1,30 @@
+!!! HTML
+
+%html
+  %head
+    %meta{"content" => "IE=edge", "http-equiv" => "X-UA-Compatible"}
+    %meta{"charset" => "utf-8"}
+    %meta{"content" => "width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no", "name" => "viewport"}
+
+    =favicon_tag 'images/favicon.png'
+    
+    %title= "WWYFFN | Predictive Footfall Based on Weather Data | #{current_page.data.title}"
+
+    =partial "css_cdn.html"
+    
+    =stylesheet_link_tag :site
+    =javascript_include_tag :all
+
+  %body
+    .header.p2
+      .contact_button.right
+        Contact
+      .header_txt.mx-auto.center
+        %h1 WYFFT
+        
+
+    .content
+      =yield
+
+    .explanation
+      %p This was a project for Durhack 2016 which predicts footfall based on weather data.

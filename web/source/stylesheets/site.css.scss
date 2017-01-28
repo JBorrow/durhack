@@ -1,1 +1,27 @@
 @charset "utf-8";
+
+html * {
+  font-family: Roboto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Montserrat;
+}
+
+html, body {
+  margin:0;
+}
+
+.header {
+  background-color:#8F1B00;
+  color:white;
+}
+
+.content {
+  max-width:50em;
+  margin:auto;
+}
+
+.data_box {
+  background-color:#DDDDDD;
+}
