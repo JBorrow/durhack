@@ -79,23 +79,50 @@ ax.legend()
 ## plots footfall each day on silver street
 
 
-
-
 daily_footfall_ss_16 =  ss16.flatten()
 
 fig = plt.figure()
 
 ax = fig.add_subplot(111)
 
-ax.scatter(np.arange(0,len(daily_footfall_ss_16)),daily_footfall_ss_16)
+ax.plot(np.arange(0,len(daily_footfall_ss_16)),daily_footfall_ss_16)
 
 saturdays_s16 = daily_footfall_ss_16[5::7]
 saturdays_s16_day_no = np.arange(0,len(daily_footfall_ss_16))[5::7]
 
-ax.scatter(saturdays_s16_day_no,saturdays_s16,color = 'r')
+sunday_s16 = daily_footfall_ss_16[6::7]
+sundays_s16_day_no = np.arange(0,len(daily_footfall_ss_16))[6::7]
+
+ax.scatter(saturdays_s16_day_no,saturdays_s16,color = 'g',label = 'saturdays')
+ax.scatter(sundays_s16_day_no,sunday_s16,color = 'r',label = 'sundays')
+
+ax.set_xlabel('day')
+
+ax.set_ylabel('footfall')
+ax.legend()
 
 plt.show()
 
 
+## overlaying all of the weeks on silver street
 
+fig = plt.figure()
+ax = fig.add_subplot(211)
+
+for week in range(53):
+	ax.plot(ss16[week,:])
+
+ax.set_title('silver street 2016 ')
+ax.set_ylabel('footfall')
+
+ax1 = fig.add_subplot(212)
+for week in range(53):
+	ax1.plot(ss15[week,:])
+
+ax1.set_title('silver street 2015 ')
+ax1.set_xlabel('week day')
+ax1.set_ylabel('footfall')
+
+
+plt.show()
 
