@@ -2,30 +2,51 @@
 title: Home
 ---
 .flex.flex-wrap.p2
-  .larrow.col-1.border-box
+  .larrow.col-1.border-box{:onclick => "left()"}
     .left_arrow.py4.px1.left
       <i class="fa fa-arrow-left fa-lg"></i> 
-  .data_box.p2.col-10.border-box.rounded#silver_street
+  .col-10.border-box#silva
     %h2.center Silver Street
+    .data_box.rounded.p2.px3
+      .vbox.my2
+        .flex.justify-between
+          .day
+            Monday 1st
+          .weather
+            <i class="fa fa-sun-o fa-lg"></i> 22 C
+          .footfall
+            2000 <i class="fa fa-users fa-lg"></i> (200)
 
-    .vbox.my2
-      .flex.justify-between
-        .day
-          Monday 1st
-        .weather
-          <i class="fa fa-sun-o fa-lg"></i> 22 C
-        .footfall
-          2000 <i class="fa fa-users fa-lg"></i> (200)
+      .vbox.my2
+        .flex.justify-between
+          .day
+            Tuesday 2nd
+          .weather
+            <i class="fa fa-sun-o fa-lg"></i>  22 C
+          .footfall
+            2000 <i class="fa fa-users fa-lg"></i> (200)
 
-    .vbox.my2
-      .flex.justify-between
-        .day
-          Tuesday 2nd
-        .weather
-          <i class="fa fa-sun-o fa-lg"></i>  22 C
-        .footfall
-          2000 <i class="fa fa-users fa-lg"></i> (200)
+  .col-10.border-box#x
+    %h2.center X Street
+    .data_box.rounded.p2.px3
+      .vbox.my2
+        .flex.justify-between
+          .day
+            Monday 1st
+          .weather
+            <i class="fa fa-sun-o fa-lg"></i> 22 C
+          .footfall
+            2000 <i class="fa fa-users fa-lg"></i> (200)
 
-  .rarrow.col-1.border-box
+      .vbox.my2
+        .flex.justify-between
+          .day
+            Tuesday 2nd
+          .weather
+            <i class="fa fa-sun-o fa-lg"></i>  22 C
+          .footfall
+            2000 <i class="fa fa-users fa-lg"></i> (200)
+
+  .rarrow.col-1.border-box{:onclick => "right()"}
     .right_arrow.py4.px1.right
       <i class="fa fa-arrow-right fa-lg"></i> 
