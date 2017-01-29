@@ -14,6 +14,8 @@ Written for Python 2, sorry :( (I'm a physicist)
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy.optimize import leastsq
+from scipy.optimize import curve_fit
 
 
 #----------------------------------------------+ Loading Data +--------------------------------------------------------------------------------------
@@ -43,13 +45,23 @@ day_labels = ['m','t','w','th','f','sa','su']
 
 weeks_in_year	 = 53
 days_in_week = 7
+days_in_month = 28
+weeks_in_month = days_in_month/days_in_week
 #---------------------------------------------+ Formatting Data +--------------------------------------------------------------------------------------
 
 ## Function to format data and return day weights
 
-def day_multiplier(street_year):
+
+
+def term_model(	t, amplitude, wavenumber,phase ,baseline):
+	"""artificial model for term times
 	"""
-	Function to normalise footfall data for the effects of a particular day of the week
+
+	return amplitude* (np.sin(wavenumber*t + phase))**2 + baseline
+
+def day_month_correction(street_year):
+	"""
+	Function to normalise footfall data for the effects of a particular day of the week and a particular month
 	
 	Inputs:
 	------
@@ -57,11 +69,13 @@ def day_multiplier(street_year):
 
 	Outputs: 
 	-------
-	year without day effect : array of footfall for the given year, without the effect of days [array]
+	weighted_days_and_months  : array of footfall for the given year, without the effect of days or months [array]
 
 	"""
 	daily_footfall =  street_year.flatten()
 
+
+	# normalising for the effect of different days
 
 	normalised_footfall = []
 
@@ -76,7 +90,7 @@ def day_multiplier(street_year):
 
 	average_week = np.mean(normalised_footfall,axis = 0)
 
-	relative_day_weights = np.mean(normalised_footfall[:-1],axis = 0) # ignoring weird last data point ---> check!
+	relative_day_weights = np.mean(normalised_footfall[:-1], axis = 0) # ignoring weird last data point ---> check!
 
 	day_multipliers = 1/(relative_day_weights/min(relative_day_weights))
 
@@ -87,26 +101,94 @@ def day_multiplier(street_year):
 
 	weighted_days = (np.array(weighted_days)).flatten()
 
+
+	# normalising for the effect of different months
+	months_in_year = int(len(daily_footfall)/days_in_month)
+
+	extra_days =  int((len(daily_footfall)/days_in_month - months_in_year)*days_in_month) # dodgy fix for int number of months
+
+	normalised_footfall = np.array(normalised_footfall)
+	normalised_footfall = normalised_footfall.flatten()
+	normalised_footfall = normalised_footfall[:-extra_days]
+
+
+	normalised_footfall = np.reshape(normalised_footfall,(-1,1))
+
+	normalised_footfall = np.reshape(normalised_footfall,(months_in_year,days_in_month))
+
+
+
+	relative_month_weights = np.mean(normalised_footfall,axis = 1)
+
+
+	month_multpliers = 1/(relative_month_weights/min(relative_month_weights))
+
+
+	weighted_days = weighted_days[:-extra_days]
+
+
+	weighted_days = np.reshape(weighted_days,(months_in_year,days_in_month))
+	weighted_days_and_months = []
+	for month in range(months_in_year):
+		weighted_days_and_months.append(weighted_days[month]*month_multpliers[month])
+
+	weighted_days_and_months = np.array(weighted_days_and_months).flatten()
+	
+	res = abs(weighted_days_and_months - weighted_days.flatten())
+
 	fig = plt.figure()
+	plt.plot(daily_footfall,label='no correction')
+	plt.plot(weighted_days.flatten(), label ='days removed')
+	plt.plot(weighted_days_and_months,label='days & months removed')
 
-	plt.plot(weighted_days)
-	plt.plot(daily_footfall)
 
+	plt.legend()
+	plt.xlabel('days')
+	plt.ylabel('footfall')
 	plt.show()
 
+	return weighted_days_and_months.astype(float)
 
-day_multiplier(nr16)
 
 
-def month_multplier(street_year):
-	"""
-	function to remove the variation in footfall due to being in a particular month.
-	Inputs:
-	------
-	street_year : accepted inputs are - ss15, eb15, nr15 ss16 eb16 nr16 cp16 mp16 [var]
 
-	Outputs: 
-	-------
-	year without moth effect : array of footfall for the given year, without the effect of months [array]
 
-	"""
+
+def term_correction(street_year_day_month):
+
+	y = day_month_correction(street_year_day_month)
+
+	y = y.flatten()
+
+	t = np.arange(0,len(y))
+
+	guess_amplitude = 3*np.std(y)/(2**0.5)
+	guess_wavenumber = 0.025
+	guess_phase = 0.5
+	guess_baseline = np.median(y)
+
+	p0 = [guess_amplitude,guess_wavenumber,guess_phase,guess_baseline]
+
+	fit = curve_fit(term_model, t, y, p0=p0)
+
+	data_fit = term_model(t, *fit[0])
+
+	data_first_guess = term_model(t, *p0)
+
+
+
+	plt.plot(y,'.')
+	plt.plot(-1*data_fit + 2*fit[0][], label='after fitting')
+	plt.plot(data_first_guess, label='first guess')
+	plt.legend()
+	plt.show()
+
+	return data_fit
+
+term_correction(ss16)
+
+day_month_correction(ss16)
+
+
+
+
