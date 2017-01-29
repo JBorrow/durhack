@@ -49,9 +49,9 @@ weeks_in_month = days_in_month/days_in_week
 
 ## Function to format data and return day weights
 
-def day_multiplier(street_year):
+def day_month_multiplier(street_year):
 	"""
-	Function to normalise footfall data for the effects of a particular day of the week
+	Function to normalise footfall data for the effects of a particular day of the week and a particular month
 	
 	Inputs:
 	------
@@ -59,7 +59,7 @@ def day_multiplier(street_year):
 
 	Outputs: 
 	-------
-	year without day effect : array of footfall for the given year, without the effect of days [array]
+	weighted_days_and_months  : array of footfall for the given year, without the effect of days or months [array]
 
 	"""
 	daily_footfall =  street_year.flatten()
@@ -91,6 +91,7 @@ def day_multiplier(street_year):
 
 	weighted_days = (np.array(weighted_days)).flatten()
 
+
 	# normalising for the effect of different months
 	months_in_year = int(len(daily_footfall)/days_in_month)
 
@@ -100,7 +101,6 @@ def day_multiplier(street_year):
 	normalised_footfall = normalised_footfall.flatten()
 	normalised_footfall = normalised_footfall[:-extra_days]
 
-	print len(normalised_footfall)/13, months_in_year
 
 	normalised_footfall = np.reshape(normalised_footfall,(-1,1))
 
@@ -109,25 +109,53 @@ def day_multiplier(street_year):
 
 	average_year = np.mean(normalised_footfall,axis = 1)
 
+	plt.figure()
+	plt.plot(average_year)
+	plt.show()
 	relative_month_weights = np.mean(normalised_footfall,axis = 1)
 
 	month_multpliers = 1/(relative_month_weights/min(relative_month_weights))
 
-	weighted_days_months = []
 
 
+	weighted_days = weighted_days[:-extra_days]
 
 
+	weighted_days = np.reshape(weighted_days,(months_in_year,days_in_month))
+	weighted_days_and_months = []
+	for month in range(months_in_year):
+		weighted_days_and_months.append(weighted_days[month]*month_multpliers[month])
 
+	weighted_days_and_months = np.array(weighted_days_and_months).flatten()
+	
+	res = abs(weighted_days_and_months - weighted_days.flatten())
 
-'''
 	fig = plt.figure()
+	plt.plot(daily_footfall,label='no correction')
+	plt.plot(weighted_days.flatten(), label ='days removed')
+	plt.plot(weighted_days_and_months,label='days & months removed')
 
-	plt.plot(weighted_days)
-	plt.plot(daily_footfall)
+	plt.legend()
+	plt.xlabel('days')
+	plt.ylabel('footfall')
 
 	plt.show()
-'''
 
-day_multiplier(nr16)
+	return weighted_days_and_months
+
+
+
+def term_multiplier(street_year,univ_vacations):
+	"""
+	function to remove the effects of university terms times
+	"""
+
+
+
+
+
+
+	return weighted_term
+
+day_month_multiplier(ss16)
 
