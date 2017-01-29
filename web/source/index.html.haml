@@ -10,12 +10,19 @@ title: Home
     .col-10.border-box{:id => street.id}
       %h2.center= street.name
       .data_box.rounded.p2.px3{:id => street.id + "_data"}
+        .vbox.my2
+          .flex.justify-between
+            .day
+              .day_name= "<h5>Day Name</h5>"
+            .weather= "<h5>Temperature</h5>"
+            .footfall
+              ="<h5>Predicted Fooftall (Modifier)</h5>"
         - street.days.each do |day|
           .vbox.my2
             .flex.justify-between
               .day
                 .day_name= day.dayname
-              .weather= day.temp
+              .weather= "%2.1f C" % day.temp
               .footfall
                 ="%5.0f (%0.3f)" % [day.footfall, day.modifier]
 

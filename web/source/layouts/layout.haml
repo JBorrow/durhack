@@ -17,8 +17,8 @@
 
   %body
     .header.p2
-      .contact_button.right
-        Contact
+      .header_txt.mx-auto.center
+        =image_tag 'logo.svg', :class => "logoimg"
       .header_txt.mx-auto.center
         %h1 WYFFT
         
@@ -27,4 +27,6 @@
       =yield
 
     .explanation.p2.mt3
-      %p.center This was a project for Durhack 2016 which predicts footfall based on weather data.
+      %p.center This was a project for Durhack 2017 which predicts footfall based on weather data. You can find out more on the GitHub repository, available at http://www.github.com/jborrow/durhack.
+      .contact_button.center.pt2
+        =link_to "Contact", "mailto:test@test.com"
