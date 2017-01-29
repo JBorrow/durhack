@@ -151,9 +151,6 @@ def day_month_correction(street_year):
 
 
 
-
-
-
 def term_correction(street_year_day_month):
 
 	y = day_month_correction(street_year_day_month)
@@ -174,16 +171,20 @@ def term_correction(street_year_day_month):
 	data_fit = term_model(t, *fit[0])
 
 	data_first_guess = term_model(t, *p0)
+	fit[0][3]*2 
 
-
-
+	'''
 	plt.plot(y,'.')
-	plt.plot(-1*data_fit + 2*fit[0][], label='after fitting')
+	plt.plot((fit[0][3]*2 - data_fit), label='after fitting')
 	plt.plot(data_first_guess, label='first guess')
 	plt.legend()
-	plt.show()
+	plt.show()'''
 
-	return data_fit
+	corrected_term =  (y + (fit[0][3]*2 - data_fit))/2
+
+	plt.plot(corrected_term)
+	plt.plot(y,'.')
+
 
 term_correction(ss16)
 
