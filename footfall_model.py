@@ -167,20 +167,18 @@ def term_correction(street_year_day_month):
 	correction =fit[0][3]*2 
 
 	corrected_term =  (y + (correction - data_fit))/2
-	plt.figure()
-	plt.plot(corrected_term)
-	plt.plot(y,'.')
-	plt.show()
+
 
 	return (corrected_term, fit[0], data[1], data[2]) # returning all fit parameters + fully corrected footfall
 
 
-def footfall_model(street_year):
+def footfall_model(street_year,day):
 	"""
 	takes predicted parameters from correction functions returns footfall
 		
 	"""
 	data = term_correction(street_year)
+	measured = street_year
 
 	corrected_footfall = data[0].flatten()
 	t = np.arange(0,len(corrected_footfall))
@@ -208,10 +206,12 @@ def footfall_model(street_year):
 		baseline_and_sine_and_month.append(month_multpliers[month]*baseline_and_sine[month])
 
 
-	day_multipliers_list = list(day_multipliers)*int(384/7)
+	day_multipliers_list = list(day_multipliers)*int(364/7)
+	day_multipliers_array = np.array(day_multipliers_list)
 
-	return day_multipliers_list
+	baseline_and_sine_and_month_and_day = day_multipliers_array*baseline_and_sine.flatten()-1700
 
-	 
 
-print footfall_model(ss16)
+	print 'predicted footfall: ', int(baseline_and_sine_and_month_and_day[day])
+
+
