@@ -1,6 +1,6 @@
 import datapoint as dp
 import numpy as np
-import json
+import yaml
 
 def model(x, street):
     return x
@@ -29,5 +29,5 @@ for day in forecast.days:
         output[dayn][street[0]]['modifier'] = model(float(np.random.rand()), street)
 
     
-with open('data/streets.json', 'w') as outfile:
-    json.dump(output, outfile)
+with open('data/streets.yml', 'w') as outfile:
+    yaml.dump(output, outfile)
