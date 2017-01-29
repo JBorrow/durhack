@@ -136,24 +136,17 @@ def day_month_correction(street_year):
 	
 	res = abs(weighted_days_and_months - weighted_days.flatten())
 
-	fig = plt.figure()
-	plt.plot(daily_footfall,label='no correction')
-	plt.plot(weighted_days.flatten(), label ='days removed')
-	plt.plot(weighted_days_and_months,label='days & months removed')
+
+	return (weighted_days_and_months.astype(float),day_multipliers,month_multpliers)
 
 
-	plt.legend()
-	plt.xlabel('days')
-	plt.ylabel('footfall')
-	plt.show()
-
-	return weighted_days_and_months.astype(float)
 
 
 
 def term_correction(street_year_day_month):
 
-	y = day_month_correction(street_year_day_month)
+	data = day_month_correction(street_year_day_month)
+	y = data[0]
 
 	y = y.flatten()
 
@@ -171,25 +164,54 @@ def term_correction(street_year_day_month):
 	data_fit = term_model(t, *fit[0])
 
 	data_first_guess = term_model(t, *p0)
-	fit[0][3]*2 
+	correction =fit[0][3]*2 
 
-	'''
-	plt.plot(y,'.')
-	plt.plot((fit[0][3]*2 - data_fit), label='after fitting')
-	plt.plot(data_first_guess, label='first guess')
-	plt.legend()
-	plt.show()'''
-
-	corrected_term =  (y + (fit[0][3]*2 - data_fit))/2
-
+	corrected_term =  (y + (correction - data_fit))/2
+	plt.figure()
 	plt.plot(corrected_term)
 	plt.plot(y,'.')
+	plt.show()
+
+	return (corrected_term, fit[0], data[1], data[2]) # returning all fit parameters + fully corrected footfall
 
 
-term_correction(ss16)
+def footfall_model(street_year):
+	"""
+	takes predicted parameters from correction functions returns footfall
+		
+	"""
+	data = term_correction(street_year)
 
-day_month_correction(ss16)
+	corrected_footfall = data[0].flatten()
+	t = np.arange(0,len(corrected_footfall))
+
+	params = [data[1],data[2],data[3]]
+
+	day_multipliers = data[2]
+	month_multpliers = data[3]
 
 
+	baseline = np.mean(corrected_footfall[:-1])
+	baseline = np.zeros(len(corrected_footfall)) + baseline
+
+	
+	# first plug in effects of terms - sine correction
+
+	sine_correction = term_model(t,*params[0])
+
+	baseline_and_sine = (sine_correction + baseline) 
+
+	baseline_and_sine = np.reshape(baseline_and_sine,((13,days_in_month)))
+
+	baseline_and_sine_and_month = []
+	for month in range(len(baseline_and_sine)):
+		baseline_and_sine_and_month.append(month_multpliers[month]*baseline_and_sine[month])
 
 
+	day_multipliers_list = list(day_multipliers)*int(384/7)
+
+	return day_multipliers_list
+
+	 
+
+print footfall_model(ss16)
