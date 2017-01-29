@@ -34,6 +34,9 @@ configure :build do
   # Minify CSS on build
   # activate :minify_css
 
+  set :relative_links, true
+  activate :relative_assets
+
   # Minify Javascript on build
   # activate :minify_javascript
 end
