@@ -214,7 +214,7 @@ def footfall_model(street_year,day):
 
 	modifier = int(baseline_and_sine_and_month_and_day[day])/baseline_0
 
-	print 'predicted footfall: ', int(baseline_and_sine_and_month_and_day[day]), modifier
+	return (int(baseline_and_sine_and_month_and_day[day]), modifier)
 
 
-footfall_model(ss16,15)
+footfall_model(ss16,100)
