@@ -190,8 +190,8 @@ def footfall_model(street_year,day):
 	month_multpliers = data[3]
 
 
-	baseline = np.mean(corrected_footfall[:-1])
-	baseline = np.zeros(len(corrected_footfall)) + baseline
+	baseline_0 = np.mean(corrected_footfall[:-1])
+	baseline = np.zeros(len(corrected_footfall)) + baseline_0
 
 	
 	# first plug in effects of terms - sine correction
@@ -213,6 +213,7 @@ def footfall_model(street_year,day):
 	baseline_and_sine_and_month_and_day = day_multipliers_array*baseline_and_sine.flatten()-high_footfall_thresh
 
 
-	print 'predicted footfall: ', int(baseline_and_sine_and_month_and_day[day])
+	print 'predicted footfall: ', int(baseline_and_sine_and_month_and_day[day]), baseline_0
 
 
+footfall_model(ss16,15)
