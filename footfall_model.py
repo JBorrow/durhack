@@ -47,6 +47,7 @@ weeks_in_year	 = 53
 days_in_week = 7
 days_in_month = 28
 weeks_in_month = days_in_month/days_in_week
+high_footfall_thresh = 1700
 #---------------------------------------------+ Formatting Data +--------------------------------------------------------------------------------------
 
 ## Function to format data and return day weights
@@ -167,20 +168,18 @@ def term_correction(street_year_day_month):
 	correction =fit[0][3]*2 
 
 	corrected_term =  (y + (correction - data_fit))/2
-	plt.figure()
-	plt.plot(corrected_term)
-	plt.plot(y,'.')
-	plt.show()
+
 
 	return (corrected_term, fit[0], data[1], data[2]) # returning all fit parameters + fully corrected footfall
 
 
-def footfall_model(street_year):
+def footfall_model(street_year,day):
 	"""
 	takes predicted parameters from correction functions returns footfall
 		
 	"""
 	data = term_correction(street_year)
+	measured = street_year
 
 	corrected_footfall = data[0].flatten()
 	t = np.arange(0,len(corrected_footfall))
@@ -191,8 +190,8 @@ def footfall_model(street_year):
 	month_multpliers = data[3]
 
 
-	baseline = np.mean(corrected_footfall[:-1])
-	baseline = np.zeros(len(corrected_footfall)) + baseline
+	baseline_0 = np.mean(corrected_footfall[:-1])
+	baseline = np.zeros(len(corrected_footfall)) + baseline_0
 
 	
 	# first plug in effects of terms - sine correction
@@ -208,10 +207,14 @@ def footfall_model(street_year):
 		baseline_and_sine_and_month.append(month_multpliers[month]*baseline_and_sine[month])
 
 
-	day_multipliers_list = list(day_multipliers)*int(384/7)
+	day_multipliers_list = list(day_multipliers)*int(364/7)
+	day_multipliers_array = np.array(day_multipliers_list)
 
-	return day_multipliers_list
+	baseline_and_sine_and_month_and_day = day_multipliers_array*baseline_and_sine.flatten()-high_footfall_thresh
 
-	 
+	modifier = int(baseline_and_sine_and_month_and_day[day])/baseline_0
 
-print footfall_model(ss16)
+	return (int(baseline_and_sine_and_month_and_day[day]), modifier)
+
+
+footfall_model(ss16,100)
