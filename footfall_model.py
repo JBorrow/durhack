@@ -212,8 +212,9 @@ def footfall_model(street_year,day):
 
 	baseline_and_sine_and_month_and_day = day_multipliers_array*baseline_and_sine.flatten()-high_footfall_thresh
 
+	modifier = int(baseline_and_sine_and_month_and_day[day])/baseline_0
 
-	print 'predicted footfall: ', int(baseline_and_sine_and_month_and_day[day]), baseline_0
+	print 'predicted footfall: ', int(baseline_and_sine_and_month_and_day[day]), modifier
 
 
 footfall_model(ss16,15)
