@@ -1,7 +1,7 @@
 // This is where it all goes :)
 
 window.onload = function () {
-	pages = ['ss', 'x', 'y', 'z'];
+	pages = ['ss', 'eb'];
 	
 	current_page = 0;
 
