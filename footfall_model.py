@@ -47,6 +47,7 @@ weeks_in_year	 = 53
 days_in_week = 7
 days_in_month = 28
 weeks_in_month = days_in_month/days_in_week
+high_footfall_thresh = 1700
 #---------------------------------------------+ Formatting Data +--------------------------------------------------------------------------------------
 
 ## Function to format data and return day weights
@@ -209,7 +210,7 @@ def footfall_model(street_year,day):
 	day_multipliers_list = list(day_multipliers)*int(364/7)
 	day_multipliers_array = np.array(day_multipliers_list)
 
-	baseline_and_sine_and_month_and_day = day_multipliers_array*baseline_and_sine.flatten()-1700
+	baseline_and_sine_and_month_and_day = day_multipliers_array*baseline_and_sine.flatten()-high_footfall_thresh
 
 
 	print 'predicted footfall: ', int(baseline_and_sine_and_month_and_day[day])
