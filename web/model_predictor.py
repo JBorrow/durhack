@@ -16,17 +16,17 @@ forecast = conn.get_forecast_for_site(site.id, "3hourly")
 output = {}
 streets = [['ss', 'Silver Street'], ['x', 'Street X'], ['y', 'Street Y'], ['z', 'Street Z']]
 
-for day in forecast.days:
-    # midday
-    dayn = day.date.strftime("%A")
-    output[dayn] = {}
-    output[dayn]['temp'] = float(day.timesteps[4].temperature.value)
-    output[dayn]['desc'] = day.timesteps[4].weather.text
+for street in streets:
+    output[street[0]] = {'name': street[1]}
+    for day in forecast.days:
+        dayn = day.date.strftime("%A")
+        output[street[0]][dayn] = {}
+        output[street[0]][dayn]['temp'] = float(day.timesteps[4].temperature.value)
+        output[street[0]][dayn]['desc'] = day.timesteps[4].weather.text
 
-    for street in streets:
-        output[dayn][street[0]] = {'name': street[1]}
-        output[dayn][street[0]]['footfall'] = model(5000*float(np.random.rand(1)), street)
-        output[dayn][street[0]]['modifier'] = model(float(np.random.rand()), street)
+        output[street[0]][dayn]['footfall'] = model(5000*float(np.random.rand(1)), street)
+        output[street[0]][dayn]['modifier'] = model(float(np.random.rand()), street)
+
 
     
 with open('data/streets.yml', 'w') as outfile:
