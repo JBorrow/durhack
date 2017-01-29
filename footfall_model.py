@@ -14,6 +14,8 @@ Written for Python 2, sorry :( (I'm a physicist)
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy.optimize import leastsq
+from scipy.optimize import curve_fit
 
 
 #----------------------------------------------+ Loading Data +--------------------------------------------------------------------------------------
@@ -49,7 +51,15 @@ weeks_in_month = days_in_month/days_in_week
 
 ## Function to format data and return day weights
 
-def day_month_multiplier(street_year):
+
+
+def term_model(	t, amplitude, wavenumber,phase ,baseline):
+	"""artificial model for term times
+	"""
+
+	return amplitude* (np.sin(wavenumber*t + phase))**2 + baseline
+
+def day_month_correction(street_year):
 	"""
 	Function to normalise footfall data for the effects of a particular day of the week and a particular month
 	
@@ -107,15 +117,11 @@ def day_month_multiplier(street_year):
 	normalised_footfall = np.reshape(normalised_footfall,(months_in_year,days_in_month))
 
 
-	average_year = np.mean(normalised_footfall,axis = 1)
 
-	plt.figure()
-	plt.plot(average_year)
-	plt.show()
 	relative_month_weights = np.mean(normalised_footfall,axis = 1)
 
-	month_multpliers = 1/(relative_month_weights/min(relative_month_weights))
 
+	month_multpliers = 1/(relative_month_weights/min(relative_month_weights))
 
 
 	weighted_days = weighted_days[:-extra_days]
@@ -135,27 +141,54 @@ def day_month_multiplier(street_year):
 	plt.plot(weighted_days.flatten(), label ='days removed')
 	plt.plot(weighted_days_and_months,label='days & months removed')
 
+
 	plt.legend()
 	plt.xlabel('days')
 	plt.ylabel('footfall')
-
 	plt.show()
 
-	return weighted_days_and_months
-
-
-
-def term_multiplier(street_year,univ_vacations):
-	"""
-	function to remove the effects of university terms times
-	"""
+	return weighted_days_and_months.astype(float)
 
 
 
 
 
 
-	return weighted_term
+def term_correction(street_year_day_month):
 
-day_month_multiplier(ss16)
+	y = day_month_correction(street_year_day_month)
+
+	y = y.flatten()
+
+	t = np.arange(0,len(y))
+
+	guess_amplitude = 3*np.std(y)/(2**0.5)
+	guess_wavenumber = 0.025
+	guess_phase = 0.5
+	guess_baseline = np.median(y)
+
+	p0 = [guess_amplitude,guess_wavenumber,guess_phase,guess_baseline]
+
+	fit = curve_fit(term_model, t, y, p0=p0)
+
+	data_fit = term_model(t, *fit[0])
+
+	data_first_guess = term_model(t, *p0)
+
+
+
+	plt.plot(y,'.')
+	plt.plot(-1*data_fit + 2*fit[0][], label='after fitting')
+	plt.plot(data_first_guess, label='first guess')
+	plt.legend()
+	plt.show()
+
+	return data_fit
+
+term_correction(ss16)
+
+day_month_correction(ss16)
+
+
+
 
