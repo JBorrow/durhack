@@ -1,18 +1,8 @@
 // This is where it all goes :)
 
 window.onload = function () {
-	days = ['monday', 'tuesday', 'weds'];
-	weather_pics = ['sun-o', 'bolt', 'cloud'];
-	weather_temps = [22, 23, 23];
-	ffall = [2123, 1231, 2343];
-	ffallpc = [22, 22, 24];
-
-	pages = ['silva', 'x'];
-
-        silva_data = pretty_data(days, weather_pics, weather_temps, ffall, ffallpc);
-	document.getElementById('silva_data').innerHTML = silva_data;
-	document.getElementById('x_data').innerHTML = silva_data;
-
+	pages = ['ss', 'x', 'y', 'z'];
+	
 	current_page = 0;
 
 	display_pages(current_page);
